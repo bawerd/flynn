@@ -18,9 +18,9 @@ install:
 
   - go install github.com/flynn/flynn/discoverd
 
-  - wget https://github.com/coreos/etcd/releases/download/v0.4.6/etcd-v0.4.6-linux-amd64.tar.gz
-  - tar xzf etcd-v0.4.6-linux-amd64.tar.gz
-  - mv etcd-v0.4.6-linux-amd64/etcd $HOME/gopath/bin
+  - wget https://github.com/coreos/etcd/releases/download/v0.5.0-alpha.5/etcd-v0.5.0-alpha.5-linux-amd64.tar.gz
+  - tar xzf etcd-v0.5.0-alpha.5-linux-amd64.tar.gz
+  - mv etcd-v0.5.0-alpha.5-linux-amd64/etcd $HOME/gopath/bin
   - export PATH=$HOME/gopath/bin:$PATH
 
   - sudo mkdir -p /usr/include/btrfs
