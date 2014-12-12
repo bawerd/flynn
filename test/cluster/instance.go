@@ -74,6 +74,7 @@ type Instance struct {
 	cmd *exec.Cmd
 
 	tempFiles []string
+	initial   bool
 }
 
 func (i *Instance) writeInterfaceConfig() error {
