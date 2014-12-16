@@ -1,0 +1,16 @@
+.github-auth {
+  label {
+    > .text {
+      display: inline;
+      margin: 0;
+      margin-right: 0.5rem;
+      color: inherit;
+      &:after {
+        content: ":";
+      }
+    }
+    > input {
+      margin-top: 1rem;
+    }
+  }
+}

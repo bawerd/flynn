@@ -34,7 +34,9 @@ Dashboard.routers.Github = Marbles.Router.createClass({
 	},
 
 	auth: function () {
-		var props = {};
+		var props = {
+			appName: Dashboard.config.APP_NAME
+		};
 		var view = Dashboard.primaryView;
 		if (view && view.constructor.displayName === "Views.GithubAuth" && view.isMounted()) {
 			view.setProps(props);
@@ -160,6 +162,14 @@ Dashboard.routers.Github = Marbles.Router.createClass({
 			case "GITHUB_AUTH_CHANGE":
 				this.__handleGithubAuthChange(event.authenticated);
 			break;
+
+			case "APP:RELEASE_CREATE_FAILED":
+				this.__handleReleaseCreateFailed(event);
+			break;
+
+			case "APP:RELEASE_CREATED":
+				this.__handleReleaseCreated(event);
+			break;
 		}
 	},
 
@@ -235,6 +245,23 @@ Dashboard.routers.Github = Marbles.Router.createClass({
 	__handleGithubAuthChange: function (authenticated) {
 		if ( !authenticated && Marbles.history.path.match(/^github/) ) {
 			this.__redirectToGithub();
+		}
+	},
+
+	__handleReleaseCreateFailed: function (event) {
+		var view = Dashboard.primaryView;
+		if (view && view.constructor.displayName === "Views.GithubAuth" && view.isMounted() && view.props.appName === event.appId) {
+			view.setProps({
+				errorMsg: event.errorMsg
+			});
+		}
+	},
+
+	__handleReleaseCreated: function (event) {
+		var view = Dashboard.primaryView;
+		if (view && view.constructor.displayName === "Views.GithubAuth" && view.isMounted() && view.props.appName === event.appId) {
+			// Github token saved, reload to continue
+			window.location.reload();
 		}
 	},
 
