@@ -45,6 +45,10 @@ Dashboard.Views.GithubAuth = React.createClass({
 									<i className="icn-github-mark" />
 									Generate Token
 								</ExternalLink>
+
+								<div>
+									<img src={Dashboard.config.ASSET_PATHS['github-token-gen.png']} alt="Generate Token" />
+								</div>
 							</li>
 
 							<li>
@@ -52,6 +56,10 @@ Dashboard.Views.GithubAuth = React.createClass({
 									<span className="text">Token</span>
 									<input type="text" ref="githubToken" onChange={this.__handleGithubTokenChange} />
 								</label>
+
+								<div>
+									<img src={Dashboard.config.ASSET_PATHS['github-token-copy.png']} alt="Copy Token" />
+								</div>
 							</li>
 
 							<li>

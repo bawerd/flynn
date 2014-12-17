@@ -21,6 +21,9 @@ Marbles.Utils.extend(Dashboard.config, {
     windows-cert-5.png
     windows-cert-6.png
     windows-cert-7.png
+
+    github-token-gen.png
+    github-token-copy.png
   ).inject({}) { |memo, name| memo[name] = "/assets/"+ asset_path(name).sub(/\A\.\//, ''); memo }) %>
 }, window.DashboardConfig || {});
 
