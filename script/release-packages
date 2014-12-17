@@ -138,7 +138,7 @@ main() {
   popd >/dev/null
 
   info "uploading images"
-  "${flynn_release}" upload "${src}/version.json"
+  "${flynn_release}" upload "${src}/images.json"
 
   info "building deb package"
   rm -f "${src}"/*.deb

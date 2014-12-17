@@ -1,8 +1,11 @@
 package store
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -11,6 +14,7 @@ import (
 	"syscall"
 
 	"github.com/flynn/flynn/Godeps/_workspace/src/github.com/docker/docker/daemon/graphdriver"
+	"github.com/flynn/flynn/Godeps/_workspace/src/github.com/docker/docker/pkg/tarsum"
 	"github.com/flynn/flynn/pinkerton/registry"
 )
 
@@ -88,6 +92,62 @@ func (s *Store) Add(img *registry.Image) (err error) {
 func (s *Store) Exists(id string) bool {
 	_, err := os.Stat(s.root(id))
 	return err == nil
+}
+
+type Image struct {
+	ID     string `json:"id"`
+	Parent string `json:"parent"`
+}
+
+func (s *Store) WalkHistory(id string, f func(*Image) error) error {
+	img, err := s.Get(id)
+	if err != nil {
+		return err
+	}
+	for {
+		if err := f(img); err != nil {
+			return err
+		}
+		if img.Parent == "" {
+			break
+		}
+		img, err = s.Get(img.Parent)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (s *Store) Checksum(img *Image) (string, error) {
+	diff, err := s.driver.Diff(img.ID, img.Parent)
+	if err != nil {
+		return "", err
+	}
+	defer diff.Close()
+	t, err := tarsum.NewTarSum(diff, false, tarsum.Version0)
+	if err != nil {
+		return "", err
+	}
+	h := sha256.New()
+	if _, err := io.Copy(h, t); err != nil {
+		return "", err
+	}
+	return "sha256:" + hex.EncodeToString(h.Sum(nil)), nil
+}
+
+func (s *Store) Get(id string) (*Image, error) {
+	f, err := os.Open(filepath.Join(s.root(id), "json"))
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	img := &Image{}
+	if err := json.NewDecoder(f).Decode(img); err != nil {
+		return nil, err
+	}
+	return img, nil
 }
 
 func (s *Store) root(id string) string {
